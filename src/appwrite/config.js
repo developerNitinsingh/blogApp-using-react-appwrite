@@ -1,4 +1,4 @@
-import conf from "../conf/conf";
+import conf from '../conf/conf.js';
 import { Client, ID, Databases, Storage, Query } from "appwrite";
 
 export class Service {
@@ -10,7 +10,6 @@ export class Service {
         this.client
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.appwriteProjectId);
-
         this.databases = new Databases(this.client);
         this.bucket = new Storage(this.client);
     }
@@ -26,14 +25,15 @@ export class Service {
                     content,
                     featuredImage,
                     status,
-                    userId
-                })
+                    userId,
+                }
+            )
         } catch (error) {
-            console.log("Appwite service :: createPost :: error", error)
+            console.log("Appwrite serive :: createPost :: error", error);
         }
     }
 
-    async updatePost(slug, { title, content, featuredImage, status, }) {
+    async updatePost(slug, { title, content, featuredImage, status }) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -44,11 +44,11 @@ export class Service {
                     content,
                     featuredImage,
                     status,
+
                 }
             )
-
         } catch (error) {
-            console.log("Appwite service :: updatePost :: error", error)
+            console.log("Appwrite serive :: updatePost :: error", error);
         }
     }
 
@@ -57,11 +57,12 @@ export class Service {
             await this.databases.deleteDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
-                slug,
+                slug
+
             )
             return true
         } catch (error) {
-            console.log("Appwite service :: deletePost :: error", error)
+            console.log("Appwrite serive :: deletePost :: error", error);
             return false
         }
     }
@@ -71,10 +72,12 @@ export class Service {
             return await this.databases.getDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
-                slug,
+                slug
+
             )
         } catch (error) {
-            console.log("Appwite service :: getPost :: error", error)
+            console.log("Appwrite serive :: getPost :: error", error);
+            return false
         }
     }
 
@@ -84,51 +87,51 @@ export class Service {
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 queries,
+
+
             )
         } catch (error) {
-            console.log("Appwite service :: createPost :: error", error)
+            console.log("Appwrite serive :: getPosts :: error", error);
             return false
         }
     }
 
-
-    // file upload services
+    // file upload service
 
     async uploadFile(file) {
         try {
             return await this.bucket.createFile(
                 conf.appwriteBucketId,
                 ID.unique(),
-                file,
+                file
             )
         } catch (error) {
-            console.log("Appwite service :: uploadFile :: error", error)
+            console.log("Appwrite serive :: uploadFile :: error", error);
             return false
         }
     }
 
-    async deleteFile(fileID) {
+    async deleteFile(fileId) {
         try {
             await this.bucket.deleteFile(
                 conf.appwriteBucketId,
-                fileID,
-
+                fileId
             )
             return true
         } catch (error) {
-            console.log("Appwite service :: deleteFile :: error", error)
+            console.log("Appwrite serive :: deleteFile :: error", error);
             return false
         }
     }
 
-    getFilePreview(fileID) {
+    getFilePreview(fileId) {
         return this.bucket.getFilePreview(
             conf.appwriteBucketId,
-            fileID
+            fileId
         )
     }
-
 }
+
 
 const service = new Service()
 export default service
